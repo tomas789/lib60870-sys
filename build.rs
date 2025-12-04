@@ -138,6 +138,16 @@ fn build_lib60870(lib60870_c_dir: &Path, tls_enabled: bool) -> PathBuf {
     config.define("BUILD_EXAMPLES", "OFF");
     config.define("BUILD_TESTS", "OFF");
 
+    // Fix compatibility with newer CMake versions (3.30+)
+    // lib60870's CMakeLists.txt uses an old cmake_minimum_required
+    config.define("CMAKE_POLICY_VERSION_MINIMUM", "3.5");
+
+    // Use static CRT on Windows to avoid DLL dependencies at runtime
+    let target = env::var("TARGET").unwrap_or_default();
+    if target.contains("windows") {
+        config.define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded");
+    }
+
     // Feature: debug output
     if env::var("CARGO_FEATURE_DEBUG").is_ok() {
         config.define("CONFIG_DEBUG_OUTPUT", "1");
@@ -203,9 +213,12 @@ fn generate_bindings(lib60870_c_dir: &Path, out_dir: &Path, tls_enabled: bool) {
         .derive_default(true)
         .derive_eq(true)
         .derive_hash(true)
-        // Blocklist va_list related items that can cause issues
-        .blocklist_type("__va_list_tag")
-        .blocklist_type("va_list")
+        // Blocklist va_list related items that can cause issues on different platforms
+        .blocklist_item("__va_list_tag")
+        .blocklist_item("va_list")
+        .blocklist_item("__builtin_va_list")
+        .blocklist_item("__darwin_va_list")
+        .blocklist_item("__gnuc_va_list")
         .generate()
         .expect("Unable to generate bindings");
 

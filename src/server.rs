@@ -408,7 +408,7 @@ impl Server {
                 std::ptr::null_mut(),
                 ioa as i32,
                 value,
-                quality.bits().into(),
+                quality.bits(),
             );
             if !io.is_null() {
                 sys::CS101_ASDU_addInformationObject(asdu, io as sys::InformationObject);
@@ -443,7 +443,7 @@ impl Server {
                 std::ptr::null_mut(),
                 ioa as i32,
                 value as i32,
-                quality.bits().into(),
+                quality.bits(),
             );
             if !io.is_null() {
                 sys::CS101_ASDU_addInformationObject(asdu, io as sys::InformationObject);
@@ -476,7 +476,7 @@ impl Server {
                 std::ptr::null_mut(),
                 ioa as i32,
                 value,
-                quality.bits().into(),
+                quality.bits(),
             );
             if !io.is_null() {
                 sys::CS101_ASDU_addInformationObject(asdu, io as sys::InformationObject);
@@ -536,7 +536,7 @@ unsafe extern "C" fn interrogation_trampoline(
     if let Some(ref handler) = state.interrogation_handler {
         let conn = MasterConnection::from_ptr(connection);
         if let Some(owned_asdu) = Asdu::clone_from_ptr(asdu) {
-            handler(&conn, owned_asdu, qoi as u8)
+            handler(&conn, owned_asdu, qoi)
         } else {
             false
         }

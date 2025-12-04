@@ -2,10 +2,19 @@
 name = "lib60870"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.70"
 description = "Safe Rust bindings to lib60870-C, an IEC 60870-5-101/104 protocol implementation"
 license = "GPL-3.0"
-repository = "https://github.com/mz-automation/lib60870"
+repository = "https://github.com/tomas789/lib60870-rs"
+documentation = "https://docs.rs/lib60870"
+readme = "README.md"
+keywords = ["iec60870", "iec104", "scada", "power-systems", "ffi"]
+categories = ["external-ffi-bindings", "network-programming"]
 links = "lib60870"
+exclude = [
+    ".github/",
+    "lib60870/",
+]
 
 [features]
 default = []

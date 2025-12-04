@@ -17,48 +17,69 @@ pub const QOI_STATION: u8 = sys::IEC60870_QOI_STATION as u8;
 
 /// Cause of transmission for ASDUs.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u32)]
 pub enum CauseOfTransmission {
     /// Periodic, cyclic transmission
-    Periodic = sys::CS101_CauseOfTransmission_CS101_COT_PERIODIC,
+    Periodic,
     /// Background scan
-    Background = sys::CS101_CauseOfTransmission_CS101_COT_BACKGROUND_SCAN,
+    Background,
     /// Spontaneous transmission
-    Spontaneous = sys::CS101_CauseOfTransmission_CS101_COT_SPONTANEOUS,
+    Spontaneous,
     /// Initialized
-    Initialized = sys::CS101_CauseOfTransmission_CS101_COT_INITIALIZED,
+    Initialized,
     /// Interrogation request
-    Request = sys::CS101_CauseOfTransmission_CS101_COT_REQUEST,
+    Request,
     /// Activation
-    Activation = sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION,
+    Activation,
     /// Activation confirmation
-    ActivationCon = sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_CON,
+    ActivationCon,
     /// Deactivation
-    Deactivation = sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION,
+    Deactivation,
     /// Deactivation confirmation
-    DeactivationCon = sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION_CON,
+    DeactivationCon,
     /// Activation termination
-    ActivationTermination = sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_TERMINATION,
+    ActivationTermination,
     /// Return information caused by remote command
-    ReturnRemote = sys::CS101_CauseOfTransmission_CS101_COT_RETURN_INFO_REMOTE,
+    ReturnRemote,
     /// Return information caused by local command
-    ReturnLocal = sys::CS101_CauseOfTransmission_CS101_COT_RETURN_INFO_LOCAL,
+    ReturnLocal,
     /// Interrogated by station interrogation
-    InterrogatedByStation = sys::CS101_CauseOfTransmission_CS101_COT_INTERROGATED_BY_STATION,
+    InterrogatedByStation,
     /// Unknown type identification
-    UnknownType = sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_TYPE_ID,
+    UnknownType,
     /// Unknown cause of transmission
-    UnknownCot = sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_COT,
+    UnknownCot,
     /// Unknown common address
-    UnknownCa = sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_CA,
+    UnknownCa,
     /// Unknown information object address
-    UnknownIoa = sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_IOA,
+    UnknownIoa,
 }
 
 impl CauseOfTransmission {
     /// Convert to raw C value.
     pub fn as_raw(self) -> sys::CS101_CauseOfTransmission {
-        self as sys::CS101_CauseOfTransmission
+        match self {
+            Self::Periodic => sys::CS101_CauseOfTransmission_CS101_COT_PERIODIC,
+            Self::Background => sys::CS101_CauseOfTransmission_CS101_COT_BACKGROUND_SCAN,
+            Self::Spontaneous => sys::CS101_CauseOfTransmission_CS101_COT_SPONTANEOUS,
+            Self::Initialized => sys::CS101_CauseOfTransmission_CS101_COT_INITIALIZED,
+            Self::Request => sys::CS101_CauseOfTransmission_CS101_COT_REQUEST,
+            Self::Activation => sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION,
+            Self::ActivationCon => sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_CON,
+            Self::Deactivation => sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION,
+            Self::DeactivationCon => sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION_CON,
+            Self::ActivationTermination => {
+                sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_TERMINATION
+            }
+            Self::ReturnRemote => sys::CS101_CauseOfTransmission_CS101_COT_RETURN_INFO_REMOTE,
+            Self::ReturnLocal => sys::CS101_CauseOfTransmission_CS101_COT_RETURN_INFO_LOCAL,
+            Self::InterrogatedByStation => {
+                sys::CS101_CauseOfTransmission_CS101_COT_INTERROGATED_BY_STATION
+            }
+            Self::UnknownType => sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_TYPE_ID,
+            Self::UnknownCot => sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_COT,
+            Self::UnknownCa => sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_CA,
+            Self::UnknownIoa => sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_IOA,
+        }
     }
 
     /// Try to create from raw C value.
@@ -98,73 +119,100 @@ impl CauseOfTransmission {
 
 /// ASDU type identification.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(u32)]
 pub enum TypeId {
     // === Monitor direction (M_*) ===
     /// Single-point information (M_SP_NA_1)
-    SinglePoint = sys::IEC60870_5_TypeID_M_SP_NA_1,
+    SinglePoint,
     /// Single-point with time tag CP56Time2a (M_SP_TB_1)
-    SinglePointTime = sys::IEC60870_5_TypeID_M_SP_TB_1,
+    SinglePointTime,
     /// Double-point information (M_DP_NA_1)
-    DoublePoint = sys::IEC60870_5_TypeID_M_DP_NA_1,
+    DoublePoint,
     /// Double-point with time tag CP56Time2a (M_DP_TB_1)
-    DoublePointTime = sys::IEC60870_5_TypeID_M_DP_TB_1,
+    DoublePointTime,
     /// Step position information (M_ST_NA_1)
-    StepPosition = sys::IEC60870_5_TypeID_M_ST_NA_1,
+    StepPosition,
     /// Bitstring of 32 bits (M_BO_NA_1)
-    Bitstring32 = sys::IEC60870_5_TypeID_M_BO_NA_1,
+    Bitstring32,
     /// Measured value, normalized (M_ME_NA_1)
-    MeasuredNormalized = sys::IEC60870_5_TypeID_M_ME_NA_1,
+    MeasuredNormalized,
     /// Measured value, scaled (M_ME_NB_1)
-    MeasuredScaled = sys::IEC60870_5_TypeID_M_ME_NB_1,
+    MeasuredScaled,
     /// Measured value, scaled with time CP56Time2a (M_ME_TE_1)
-    MeasuredScaledTime = sys::IEC60870_5_TypeID_M_ME_TE_1,
+    MeasuredScaledTime,
     /// Measured value, short floating point (M_ME_NC_1)
-    MeasuredFloat = sys::IEC60870_5_TypeID_M_ME_NC_1,
+    MeasuredFloat,
     /// Measured value, short floating point with time CP56Time2a (M_ME_TF_1)
-    MeasuredFloatTime = sys::IEC60870_5_TypeID_M_ME_TF_1,
+    MeasuredFloatTime,
     /// Integrated totals (M_IT_NA_1)
-    IntegratedTotals = sys::IEC60870_5_TypeID_M_IT_NA_1,
+    IntegratedTotals,
     /// End of initialization (M_EI_NA_1)
-    EndOfInit = sys::IEC60870_5_TypeID_M_EI_NA_1,
+    EndOfInit,
 
     // === Control direction (C_*) ===
     /// Single command (C_SC_NA_1)
-    SingleCommand = sys::IEC60870_5_TypeID_C_SC_NA_1,
+    SingleCommand,
     /// Single command with time CP56Time2a (C_SC_TA_1)
-    SingleCommandTime = sys::IEC60870_5_TypeID_C_SC_TA_1,
+    SingleCommandTime,
     /// Double command (C_DC_NA_1)
-    DoubleCommand = sys::IEC60870_5_TypeID_C_DC_NA_1,
+    DoubleCommand,
     /// Regulating step command (C_RC_NA_1)
-    RegulatingStep = sys::IEC60870_5_TypeID_C_RC_NA_1,
+    RegulatingStep,
     /// Set point command, normalized (C_SE_NA_1)
-    SetpointNormalized = sys::IEC60870_5_TypeID_C_SE_NA_1,
+    SetpointNormalized,
     /// Set point command, scaled (C_SE_NB_1)
-    SetpointScaled = sys::IEC60870_5_TypeID_C_SE_NB_1,
+    SetpointScaled,
     /// Set point command, short floating point (C_SE_NC_1)
-    SetpointFloat = sys::IEC60870_5_TypeID_C_SE_NC_1,
+    SetpointFloat,
 
     // === System commands ===
     /// Interrogation command (C_IC_NA_1)
-    Interrogation = sys::IEC60870_5_TypeID_C_IC_NA_1,
+    Interrogation,
     /// Counter interrogation command (C_CI_NA_1)
-    CounterInterrogation = sys::IEC60870_5_TypeID_C_CI_NA_1,
+    CounterInterrogation,
     /// Read command (C_RD_NA_1)
-    Read = sys::IEC60870_5_TypeID_C_RD_NA_1,
+    Read,
     /// Clock synchronization (C_CS_NA_1)
-    ClockSync = sys::IEC60870_5_TypeID_C_CS_NA_1,
+    ClockSync,
     /// Test command (C_TS_NA_1)
-    TestCommand = sys::IEC60870_5_TypeID_C_TS_NA_1,
+    TestCommand,
     /// Test command with time CP56Time2a (C_TS_TA_1)
-    TestCommandTime = sys::IEC60870_5_TypeID_C_TS_TA_1,
+    TestCommandTime,
     /// Reset process command (C_RP_NA_1)
-    ResetProcess = sys::IEC60870_5_TypeID_C_RP_NA_1,
+    ResetProcess,
 }
 
 impl TypeId {
     /// Convert to raw C value.
     pub fn as_raw(self) -> sys::IEC60870_5_TypeID {
-        self as sys::IEC60870_5_TypeID
+        match self {
+            Self::SinglePoint => sys::IEC60870_5_TypeID_M_SP_NA_1,
+            Self::SinglePointTime => sys::IEC60870_5_TypeID_M_SP_TB_1,
+            Self::DoublePoint => sys::IEC60870_5_TypeID_M_DP_NA_1,
+            Self::DoublePointTime => sys::IEC60870_5_TypeID_M_DP_TB_1,
+            Self::StepPosition => sys::IEC60870_5_TypeID_M_ST_NA_1,
+            Self::Bitstring32 => sys::IEC60870_5_TypeID_M_BO_NA_1,
+            Self::MeasuredNormalized => sys::IEC60870_5_TypeID_M_ME_NA_1,
+            Self::MeasuredScaled => sys::IEC60870_5_TypeID_M_ME_NB_1,
+            Self::MeasuredScaledTime => sys::IEC60870_5_TypeID_M_ME_TE_1,
+            Self::MeasuredFloat => sys::IEC60870_5_TypeID_M_ME_NC_1,
+            Self::MeasuredFloatTime => sys::IEC60870_5_TypeID_M_ME_TF_1,
+            Self::IntegratedTotals => sys::IEC60870_5_TypeID_M_IT_NA_1,
+            Self::EndOfInit => sys::IEC60870_5_TypeID_M_EI_NA_1,
+            Self::SingleCommand => sys::IEC60870_5_TypeID_C_SC_NA_1,
+            Self::SingleCommandTime => sys::IEC60870_5_TypeID_C_SC_TA_1,
+            Self::DoubleCommand => sys::IEC60870_5_TypeID_C_DC_NA_1,
+            Self::RegulatingStep => sys::IEC60870_5_TypeID_C_RC_NA_1,
+            Self::SetpointNormalized => sys::IEC60870_5_TypeID_C_SE_NA_1,
+            Self::SetpointScaled => sys::IEC60870_5_TypeID_C_SE_NB_1,
+            Self::SetpointFloat => sys::IEC60870_5_TypeID_C_SE_NC_1,
+            Self::Interrogation => sys::IEC60870_5_TypeID_C_IC_NA_1,
+            Self::CounterInterrogation => sys::IEC60870_5_TypeID_C_CI_NA_1,
+            Self::Read => sys::IEC60870_5_TypeID_C_RD_NA_1,
+            Self::ClockSync => sys::IEC60870_5_TypeID_C_CS_NA_1,
+            Self::TestCommand => sys::IEC60870_5_TypeID_C_TS_NA_1,
+            Self::TestCommandTime => sys::IEC60870_5_TypeID_C_TS_TA_1,
+            Self::ResetProcess => sys::IEC60870_5_TypeID_C_RP_NA_1,
+        }
     }
 
     /// Try to create from raw C value.

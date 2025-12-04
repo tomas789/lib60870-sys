@@ -279,7 +279,12 @@ pub enum InfoObject {
     /// Single command
     SingleCommand(SingleCommand),
     /// Unknown or unsupported type
-    Unknown { type_id: u32, ioa: Ioa },
+    Unknown {
+        /// Raw type ID value from the ASDU
+        type_id: sys::IEC60870_5_TypeID,
+        /// Information object address
+        ioa: Ioa,
+    },
 }
 
 impl Asdu {

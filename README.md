@@ -1,5 +1,10 @@
 # lib60870
 
+[![CI](https://github.com/tomas789/lib60870-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/tomas789/lib60870-rs/actions/workflows/ci.yml)
+[![Crates.io](https://img.shields.io/crates/v/lib60870.svg)](https://crates.io/crates/lib60870)
+[![Documentation](https://docs.rs/lib60870/badge.svg)](https://docs.rs/lib60870)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 Safe Rust bindings to [lib60870-C](https://github.com/mz-automation/lib60870), an IEC 60870-5-101/104 protocol implementation.
 
 ## Features
@@ -8,6 +13,16 @@ Safe Rust bindings to [lib60870-C](https://github.com/mz-automation/lib60870), a
 - **Client (Master)** - Connect to IEC 104 servers and send commands
 - **Server (Slave)** - Accept connections and send spontaneous data
 - **Callbacks** - Rust closures for handling events and data
+
+## Platform Support
+
+| Platform | Status |
+|----------|--------|
+| Linux    | ✅ Fully supported |
+| macOS    | ✅ Fully supported |
+| Windows  | ⚠️ Experimental (build works, runtime issues) |
+
+> **Note:** Windows support is experimental. The library compiles successfully but may have runtime issues related to DLL dependencies. Contributions to improve Windows support are welcome!
 
 ## Usage
 

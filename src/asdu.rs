@@ -76,7 +76,7 @@ impl Asdu {
     }
 
     /// Get the raw type identification value.
-    pub fn type_id_raw(&self) -> u32 {
+    pub fn type_id_raw(&self) -> sys::IEC60870_5_TypeID {
         unsafe { sys::CS101_ASDU_getTypeID(self.ptr) }
     }
 
@@ -87,7 +87,7 @@ impl Asdu {
     }
 
     /// Get the raw cause of transmission value.
-    pub fn cot_raw(&self) -> u32 {
+    pub fn cot_raw(&self) -> sys::CS101_CauseOfTransmission {
         unsafe { sys::CS101_ASDU_getCOT(self.ptr) }
     }
 
