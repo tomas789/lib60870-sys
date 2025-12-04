@@ -1,6 +1,6 @@
 # lib60870
 
-[![CI](https://github.com/tomas789/lib60870-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/tomas789/lib60870-rs/actions/workflows/ci.yml)
+[![CI](https://github.com/tomas789/lib60870-sys/actions/workflows/ci.yml/badge.svg)](https://github.com/tomas789/lib60870-sys/actions/workflows/ci.yml)
 [![Crates.io](https://img.shields.io/crates/v/lib60870.svg)](https://crates.io/crates/lib60870)
 [![Documentation](https://docs.rs/lib60870/badge.svg)](https://docs.rs/lib60870)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
