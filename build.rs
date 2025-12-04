@@ -142,6 +142,12 @@ fn build_lib60870(lib60870_c_dir: &Path, tls_enabled: bool) -> PathBuf {
     // lib60870's CMakeLists.txt uses an old cmake_minimum_required
     config.define("CMAKE_POLICY_VERSION_MINIMUM", "3.5");
 
+    // Use static CRT on Windows to avoid DLL dependencies at runtime
+    let target = env::var("TARGET").unwrap_or_default();
+    if target.contains("windows") {
+        config.define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded");
+    }
+
     // Feature: debug output
     if env::var("CARGO_FEATURE_DEBUG").is_ok() {
         config.define("CONFIG_DEBUG_OUTPUT", "1");
