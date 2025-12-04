@@ -6,7 +6,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 /// A 7-byte time value (CP56Time2a) used in IEC 60870-5.
 ///
 /// This represents a timestamp with millisecond precision.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 #[repr(transparent)]
 pub struct Timestamp(pub(crate) sys::sCP56Time2a);
 
@@ -93,12 +93,6 @@ impl Timestamp {
     /// Get a mutable reference to the raw C struct (for FFI interop).
     pub fn as_raw_mut(&mut self) -> &mut sys::sCP56Time2a {
         &mut self.0
-    }
-}
-
-impl Default for Timestamp {
-    fn default() -> Self {
-        Self(sys::sCP56Time2a::default())
     }
 }
 

@@ -281,7 +281,7 @@ impl Connection {
                 self.ptr.as_ptr(),
                 cot.as_raw(),
                 ca as i32,
-                qoi.into(),
+                qoi,
             )
         }
     }
@@ -293,7 +293,7 @@ impl Connection {
                 self.ptr.as_ptr(),
                 cot.as_raw(),
                 ca as i32,
-                qcc.into(),
+                qcc,
             )
         }
     }
