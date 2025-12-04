@@ -4,6 +4,16 @@ use std::path::{Path, PathBuf};
 
 use flate2::read::GzDecoder;
 
+/// Custom ParseCallbacks to convert Doxygen documentation to Rustdoc
+#[derive(Debug)]
+struct DoxygenCallbacks;
+
+impl bindgen::callbacks::ParseCallbacks for DoxygenCallbacks {
+    fn process_comment(&self, comment: &str) -> Option<String> {
+        Some(doxygen_rs::transform(comment))
+    }
+}
+
 const LIB60870_VERSION: &str = "2.3.6";
 const LIB60870_URL: &str =
     "https://github.com/mz-automation/lib60870/archive/refs/tags/v2.3.6.tar.gz";
@@ -185,6 +195,10 @@ fn generate_bindings(lib60870_c_dir: &Path, out_dir: &Path, tls_enabled: bool) {
         .generate_inline_functions(true)
         // Generate comments from C headers
         .generate_comments(true)
+        // Parse all comments (not just doc comments in /** */ format)
+        .clang_arg("-fparse-all-comments")
+        // Convert Doxygen to Rustdoc
+        .parse_callbacks(Box::new(DoxygenCallbacks))
         // Derive common traits
         .derive_debug(true)
         .derive_default(true)
