@@ -35,13 +35,21 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock', 'build.rs') }}
           restore-keys: |
             ${{ runner.os }}-cargo-${{ matrix.rust }}-
 
       - name: Install dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+
+      - name: Clean native build cache (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          if (Test-Path "target/debug/build") {
+            Remove-Item -Recurse -Force target/debug/build/lib60870-*
+          }
+        shell: pwsh
 
       - name: Build
         run: cargo build --verbose
@@ -120,4 +128,3 @@ jobs:
         run: cargo doc --no-deps --all-features
         env:
           RUSTDOCFLAGS: -D warnings
-
