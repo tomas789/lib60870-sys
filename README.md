@@ -14,6 +14,16 @@ Safe Rust bindings to [lib60870-C](https://github.com/mz-automation/lib60870), a
 - **Server (Slave)** - Accept connections and send spontaneous data
 - **Callbacks** - Rust closures for handling events and data
 
+## Platform Support
+
+| Platform | Status |
+|----------|--------|
+| Linux    | ✅ Fully supported |
+| macOS    | ✅ Fully supported |
+| Windows  | ⚠️ Experimental (build works, runtime issues) |
+
+> **Note:** Windows support is experimental. The library compiles successfully but may have runtime issues related to DLL dependencies. Contributions to improve Windows support are welcome!
+
 ## Usage
 
 ```toml
