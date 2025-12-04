@@ -16,10 +16,10 @@ Safe Rust bindings to [lib60870-C](https://github.com/mz-automation/lib60870), a
 
 ## Platform Support
 
-| Platform | Status |
-|----------|--------|
-| Linux    | ✅ Fully supported |
-| macOS    | ✅ Fully supported |
+| Platform | Status                                       |
+| -------- | -------------------------------------------- |
+| Linux    | ✅ Fully supported                            |
+| macOS    | ✅ Fully supported                            |
 | Windows  | ⚠️ Experimental (build works, runtime issues) |
 
 > **Note:** Windows support is experimental. The library compiles successfully but may have runtime issues related to DLL dependencies. Contributions to improve Windows support are welcome!
@@ -70,6 +70,8 @@ fn main() {
 }
 ```
 
+> **Run this example:** `cargo run --example client`
+
 ## Quick Start - Server
 
 ```rust
@@ -110,6 +112,8 @@ fn main() {
     }
 }
 ```
+
+> **Run this example:** `cargo run --example server`
 
 ## Low-Level Access
 
