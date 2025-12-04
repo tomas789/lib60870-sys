@@ -23,7 +23,9 @@ pub struct Asdu {
     /// This field holds the data that `ptr` points into.
     #[allow(dead_code)]
     buffer: sys::sCS101_StaticASDU,
-    /// Pointer into the buffer (set by CS101_ASDU_clone)
+    /// Original pointer returned by CS101_ASDU_clone (kept for reference,
+    /// but as_ptr() computes the pointer dynamically to handle struct moves).
+    #[allow(dead_code)]
     ptr: sys::CS101_ASDU,
 }
 
@@ -35,7 +37,8 @@ impl Clone for Asdu {
     fn clone(&self) -> Self {
         // Clone into a new buffer
         let mut buffer = sys::sCS101_StaticASDU::default();
-        let ptr = unsafe { sys::CS101_ASDU_clone(self.ptr, &mut buffer) };
+        // Use as_ptr() to get the correct pointer even if self was moved
+        let ptr = unsafe { sys::CS101_ASDU_clone(self.as_ptr(), &mut buffer) };
         Self { buffer, ptr }
     }
 }
@@ -65,55 +68,57 @@ impl Asdu {
     /// Get the raw pointer.
     ///
     /// The pointer is valid for the lifetime of this `Asdu`.
+    /// Note: This dynamically computes the pointer from the buffer address
+    /// to handle the case where the struct has been moved.
     pub fn as_ptr(&self) -> sys::CS101_ASDU {
-        self.ptr
+        &self.buffer as *const sys::sCS101_StaticASDU as sys::CS101_ASDU
     }
 
     /// Get the type identification of this ASDU.
     pub fn type_id(&self) -> Option<TypeId> {
-        let raw = unsafe { sys::CS101_ASDU_getTypeID(self.ptr) };
+        let raw = unsafe { sys::CS101_ASDU_getTypeID(self.as_ptr()) };
         TypeId::from_raw(raw)
     }
 
     /// Get the raw type identification value.
     pub fn type_id_raw(&self) -> sys::IEC60870_5_TypeID {
-        unsafe { sys::CS101_ASDU_getTypeID(self.ptr) }
+        unsafe { sys::CS101_ASDU_getTypeID(self.as_ptr()) }
     }
 
     /// Get the cause of transmission.
     pub fn cot(&self) -> Option<CauseOfTransmission> {
-        let raw = unsafe { sys::CS101_ASDU_getCOT(self.ptr) };
+        let raw = unsafe { sys::CS101_ASDU_getCOT(self.as_ptr()) };
         CauseOfTransmission::from_raw(raw)
     }
 
     /// Get the raw cause of transmission value.
     pub fn cot_raw(&self) -> sys::CS101_CauseOfTransmission {
-        unsafe { sys::CS101_ASDU_getCOT(self.ptr) }
+        unsafe { sys::CS101_ASDU_getCOT(self.as_ptr()) }
     }
 
     /// Get the common address (station address).
     pub fn common_address(&self) -> u16 {
-        unsafe { sys::CS101_ASDU_getCA(self.ptr) as u16 }
+        unsafe { sys::CS101_ASDU_getCA(self.as_ptr()) as u16 }
     }
 
     /// Get the originator address.
     pub fn originator_address(&self) -> u8 {
-        unsafe { sys::CS101_ASDU_getOA(self.ptr) as u8 }
+        unsafe { sys::CS101_ASDU_getOA(self.as_ptr()) as u8 }
     }
 
     /// Get the number of information objects in this ASDU.
     pub fn element_count(&self) -> usize {
-        unsafe { sys::CS101_ASDU_getNumberOfElements(self.ptr) as usize }
+        unsafe { sys::CS101_ASDU_getNumberOfElements(self.as_ptr()) as usize }
     }
 
     /// Check if this is a test ASDU.
     pub fn is_test(&self) -> bool {
-        unsafe { sys::CS101_ASDU_isTest(self.ptr) }
+        unsafe { sys::CS101_ASDU_isTest(self.as_ptr()) }
     }
 
     /// Check if this is a negative confirmation.
     pub fn is_negative(&self) -> bool {
-        unsafe { sys::CS101_ASDU_isNegative(self.ptr) }
+        unsafe { sys::CS101_ASDU_isNegative(self.as_ptr()) }
     }
 
     /// Check if this ASDU uses a sequence (compact) format.
@@ -121,7 +126,7 @@ impl Asdu {
     /// In sequence format, only the first IOA is transmitted and subsequent
     /// objects have consecutive addresses.
     pub fn is_sequence(&self) -> bool {
-        unsafe { sys::CS101_ASDU_isSequence(self.ptr) }
+        unsafe { sys::CS101_ASDU_isSequence(self.as_ptr()) }
     }
 
     /// Get an information object element by index.
@@ -133,7 +138,7 @@ impl Asdu {
     /// The returned pointer is only valid while this ASDU is valid.
     /// The caller must destroy the object when done using `InformationObject_destroy`.
     pub unsafe fn get_element_raw(&self, index: usize) -> sys::InformationObject {
-        sys::CS101_ASDU_getElement(self.ptr, index as i32)
+        sys::CS101_ASDU_getElement(self.as_ptr(), index as i32)
     }
 }
 
