@@ -72,11 +72,17 @@ impl CauseOfTransmission {
             sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION => Some(Self::Activation),
             sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_CON => Some(Self::ActivationCon),
             sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION => Some(Self::Deactivation),
-            sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION_CON => Some(Self::DeactivationCon),
-            sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_TERMINATION => Some(Self::ActivationTermination),
+            sys::CS101_CauseOfTransmission_CS101_COT_DEACTIVATION_CON => {
+                Some(Self::DeactivationCon)
+            }
+            sys::CS101_CauseOfTransmission_CS101_COT_ACTIVATION_TERMINATION => {
+                Some(Self::ActivationTermination)
+            }
             sys::CS101_CauseOfTransmission_CS101_COT_RETURN_INFO_REMOTE => Some(Self::ReturnRemote),
             sys::CS101_CauseOfTransmission_CS101_COT_RETURN_INFO_LOCAL => Some(Self::ReturnLocal),
-            sys::CS101_CauseOfTransmission_CS101_COT_INTERROGATED_BY_STATION => Some(Self::InterrogatedByStation),
+            sys::CS101_CauseOfTransmission_CS101_COT_INTERROGATED_BY_STATION => {
+                Some(Self::InterrogatedByStation)
+            }
             sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_TYPE_ID => Some(Self::UnknownType),
             sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_COT => Some(Self::UnknownCot),
             sys::CS101_CauseOfTransmission_CS101_COT_UNKNOWN_CA => Some(Self::UnknownCa),
@@ -265,8 +271,12 @@ impl ConnectionEvent {
             sys::CS104_ConnectionEvent_CS104_CONNECTION_OPENED => Some(Self::Opened),
             sys::CS104_ConnectionEvent_CS104_CONNECTION_CLOSED => Some(Self::Closed),
             sys::CS104_ConnectionEvent_CS104_CONNECTION_FAILED => Some(Self::Failed),
-            sys::CS104_ConnectionEvent_CS104_CONNECTION_STARTDT_CON_RECEIVED => Some(Self::StartDtCon),
-            sys::CS104_ConnectionEvent_CS104_CONNECTION_STOPDT_CON_RECEIVED => Some(Self::StopDtCon),
+            sys::CS104_ConnectionEvent_CS104_CONNECTION_STARTDT_CON_RECEIVED => {
+                Some(Self::StartDtCon)
+            }
+            sys::CS104_ConnectionEvent_CS104_CONNECTION_STOPDT_CON_RECEIVED => {
+                Some(Self::StopDtCon)
+            }
             _ => None,
         }
     }
@@ -315,9 +325,12 @@ impl ServerMode {
     pub fn as_raw(self) -> sys::CS104_ServerMode {
         match self {
             Self::SingleRedundancyGroup => sys::CS104_ServerMode_CS104_MODE_SINGLE_REDUNDANCY_GROUP,
-            Self::ConnectionIsRedundancyGroup => sys::CS104_ServerMode_CS104_MODE_CONNECTION_IS_REDUNDANCY_GROUP,
-            Self::MultipleRedundancyGroups => sys::CS104_ServerMode_CS104_MODE_MULTIPLE_REDUNDANCY_GROUPS,
+            Self::ConnectionIsRedundancyGroup => {
+                sys::CS104_ServerMode_CS104_MODE_CONNECTION_IS_REDUNDANCY_GROUP
+            }
+            Self::MultipleRedundancyGroups => {
+                sys::CS104_ServerMode_CS104_MODE_MULTIPLE_REDUNDANCY_GROUPS
+            }
         }
     }
 }
-

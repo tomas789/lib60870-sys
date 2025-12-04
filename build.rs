@@ -19,8 +19,7 @@ const LIB60870_URL: &str =
     "https://github.com/mz-automation/lib60870/archive/refs/tags/v2.3.6.tar.gz";
 
 const MBEDTLS_VERSION: &str = "2.28.9";
-const MBEDTLS_URL: &str =
-    "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v2.28.9.tar.gz";
+const MBEDTLS_URL: &str = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v2.28.9.tar.gz";
 
 fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -214,4 +213,3 @@ fn generate_bindings(lib60870_c_dir: &Path, out_dir: &Path, tls_enabled: bool) {
         .write_to_file(out_dir.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 }
-

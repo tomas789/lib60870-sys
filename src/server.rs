@@ -233,9 +233,8 @@ impl Server {
         local_port: i32,
         server_mode: ServerMode,
     ) -> Option<Self> {
-        let ptr = unsafe {
-            sys::CS104_Slave_create(max_low_priority_queue, max_high_priority_queue)
-        };
+        let ptr =
+            unsafe { sys::CS104_Slave_create(max_low_priority_queue, max_high_priority_queue) };
         let ptr = NonNull::new(ptr)?;
 
         let c_address = CString::new(local_address).ok()?;
@@ -399,15 +398,8 @@ impl Server {
     ) {
         unsafe {
             let al_params = self.app_layer_params();
-            let asdu = sys::CS101_ASDU_create(
-                al_params,
-                false,
-                cot.as_raw(),
-                0,
-                ca as i32,
-                false,
-                false,
-            );
+            let asdu =
+                sys::CS101_ASDU_create(al_params, false, cot.as_raw(), 0, ca as i32, false, false);
             if asdu.is_null() {
                 return;
             }
@@ -441,15 +433,8 @@ impl Server {
     ) {
         unsafe {
             let al_params = self.app_layer_params();
-            let asdu = sys::CS101_ASDU_create(
-                al_params,
-                false,
-                cot.as_raw(),
-                0,
-                ca as i32,
-                false,
-                false,
-            );
+            let asdu =
+                sys::CS101_ASDU_create(al_params, false, cot.as_raw(), 0, ca as i32, false, false);
             if asdu.is_null() {
                 return;
             }
@@ -481,15 +466,8 @@ impl Server {
     ) {
         unsafe {
             let al_params = self.app_layer_params();
-            let asdu = sys::CS101_ASDU_create(
-                al_params,
-                false,
-                cot.as_raw(),
-                0,
-                ca as i32,
-                false,
-                false,
-            );
+            let asdu =
+                sys::CS101_ASDU_create(al_params, false, cot.as_raw(), 0, ca as i32, false, false);
             if asdu.is_null() {
                 return;
             }
@@ -522,9 +500,7 @@ unsafe extern "C" fn connection_request_trampoline(
     }
     let state = &*(parameter as *const CallbackState);
     if let Some(ref handler) = state.connection_request_handler {
-        let ip = std::ffi::CStr::from_ptr(ip_address)
-            .to_str()
-            .unwrap_or("");
+        let ip = std::ffi::CStr::from_ptr(ip_address).to_str().unwrap_or("");
         handler(ip)
     } else {
         true
@@ -633,4 +609,3 @@ mod tests {
         assert!(server.is_some());
     }
 }
-

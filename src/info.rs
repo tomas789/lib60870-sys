@@ -279,10 +279,7 @@ pub enum InfoObject {
     /// Single command
     SingleCommand(SingleCommand),
     /// Unknown or unsupported type
-    Unknown {
-        type_id: u32,
-        ioa: Ioa,
-    },
+    Unknown { type_id: u32, ioa: Ioa },
 }
 
 impl Asdu {
@@ -303,28 +300,22 @@ impl Asdu {
 
             let obj = match type_id {
                 Some(TypeId::SinglePoint) | Some(TypeId::SinglePointTime) => {
-                    unsafe { SinglePoint::from_raw(io) }
-                        .map(InfoObject::SinglePoint)
+                    unsafe { SinglePoint::from_raw(io) }.map(InfoObject::SinglePoint)
                 }
                 Some(TypeId::DoublePoint) | Some(TypeId::DoublePointTime) => {
-                    unsafe { DoublePoint::from_raw(io) }
-                        .map(InfoObject::DoublePoint)
+                    unsafe { DoublePoint::from_raw(io) }.map(InfoObject::DoublePoint)
                 }
                 Some(TypeId::MeasuredScaled) | Some(TypeId::MeasuredScaledTime) => {
-                    unsafe { MeasuredScaled::from_raw(io) }
-                        .map(InfoObject::MeasuredScaled)
+                    unsafe { MeasuredScaled::from_raw(io) }.map(InfoObject::MeasuredScaled)
                 }
                 Some(TypeId::MeasuredNormalized) => {
-                    unsafe { MeasuredNormalized::from_raw(io) }
-                        .map(InfoObject::MeasuredNormalized)
+                    unsafe { MeasuredNormalized::from_raw(io) }.map(InfoObject::MeasuredNormalized)
                 }
                 Some(TypeId::MeasuredFloat) | Some(TypeId::MeasuredFloatTime) => {
-                    unsafe { MeasuredFloat::from_raw(io) }
-                        .map(InfoObject::MeasuredFloat)
+                    unsafe { MeasuredFloat::from_raw(io) }.map(InfoObject::MeasuredFloat)
                 }
                 Some(TypeId::SingleCommand) | Some(TypeId::SingleCommandTime) => {
-                    unsafe { SingleCommand::from_raw(io) }
-                        .map(InfoObject::SingleCommand)
+                    unsafe { SingleCommand::from_raw(io) }.map(InfoObject::SingleCommand)
                 }
                 _ => {
                     let ioa = unsafe { sys::InformationObject_getObjectAddress(io) as Ioa };
@@ -344,4 +335,3 @@ impl Asdu {
         objects
     }
 }
-

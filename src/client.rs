@@ -127,7 +127,12 @@ impl Connection {
         Self::new_with_config(hostname, port as i32, 0, 10000)
     }
 
-    fn new_with_config(hostname: &str, port: i32, originator_address: u8, timeout_ms: u32) -> Option<Self> {
+    fn new_with_config(
+        hostname: &str,
+        port: i32,
+        originator_address: u8,
+        timeout_ms: u32,
+    ) -> Option<Self> {
         let c_hostname = CString::new(hostname).ok()?;
         let ptr = unsafe { sys::CS104_Connection_create(c_hostname.as_ptr(), port) };
         let ptr = NonNull::new(ptr)?;
@@ -164,7 +169,7 @@ impl Connection {
             connection_handler: Some(Box::new(handler)),
             asdu_handler: None,
         });
-        
+
         let state_ptr = Arc::as_ptr(&state) as *mut c_void;
         self.callback_state = Some(state);
 
@@ -188,7 +193,7 @@ impl Connection {
             connection_handler: None,
             asdu_handler: Some(Box::new(handler)),
         });
-        
+
         let state_ptr = Arc::as_ptr(&state) as *mut c_void;
         self.callback_state = Some(state);
 
@@ -214,7 +219,7 @@ impl Connection {
             connection_handler: Some(Box::new(connection_handler)),
             asdu_handler: Some(Box::new(asdu_handler)),
         });
-        
+
         let state_ptr = Arc::as_ptr(&state) as *mut c_void;
         self.callback_state = Some(state);
 
@@ -425,4 +430,3 @@ mod tests {
         assert!(conn.is_some());
     }
 }
-
