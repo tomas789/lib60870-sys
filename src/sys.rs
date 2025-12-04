@@ -10,4 +10,10 @@
 #![allow(clippy::all)]
 #![allow(unpredictable_function_pointer_comparisons)]
 
+// On docs.rs, use pre-generated bindings (no network access to download C source)
+#[cfg(docsrs)]
+include!("bindings_pregenerated.rs");
+
+// For normal builds, use freshly generated bindings from build.rs
+#[cfg(not(docsrs))]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

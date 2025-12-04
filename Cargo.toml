@@ -1,6 +1,6 @@
 [package]
 name = "lib60870"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.70"
 description = "Safe Rust bindings to lib60870-C, an IEC 60870-5-101/104 protocol implementation"
@@ -30,6 +30,12 @@ tls = []
 [dependencies]
 bitflags = "2"
 foreign-types = "0.5"
+
+[package.metadata.docs.rs]
+# Pass --cfg docsrs to rustc so we use pre-generated bindings
+rustdoc-args = ["--cfg", "docsrs"]
+# Build with all features for complete documentation
+all-features = true
 
 [build-dependencies]
 bindgen = "0.72"

@@ -22,6 +22,13 @@ const MBEDTLS_VERSION: &str = "2.28.9";
 const MBEDTLS_URL: &str = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v2.28.9.tar.gz";
 
 fn main() {
+    // On docs.rs, skip the native build entirely - we use pre-generated bindings
+    // docs.rs sets DOCS_RS=1 and has no network access
+    if env::var("DOCS_RS").is_ok() {
+        println!("cargo:warning=Skipping native build on docs.rs (using pre-generated bindings)");
+        return;
+    }
+
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let lib60870_dir = out_dir.join(format!("lib60870-{}", LIB60870_VERSION));
 
