@@ -251,7 +251,7 @@ impl SingleCommand {
             select: sys::SingleCommand_isSelect(sc),
             qualifier: sys::SingleCommand_getQU(sc) as u8,
         };
-        // Note: Don't destroy command objects received from ASDU
+        sys::SingleCommand_destroy(sc);
         Some(result)
     }
 }
@@ -260,7 +260,7 @@ impl SingleCommand {
 // Helper to parse information objects from ASDU
 // ============================================================================
 
-use crate::asdu::AsduRef;
+use crate::asdu::Asdu;
 use crate::types::TypeId;
 
 /// Parsed information object from an ASDU.
@@ -285,7 +285,7 @@ pub enum InfoObject {
     },
 }
 
-impl AsduRef {
+impl Asdu {
     /// Parse all information objects from this ASDU.
     ///
     /// Returns a vector of parsed information objects. Unknown types are

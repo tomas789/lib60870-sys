@@ -8,7 +8,7 @@ use std::os::raw::c_void;
 use std::ptr::NonNull;
 use std::sync::Arc;
 
-use crate::asdu::AsduRef;
+use crate::asdu::Asdu;
 use crate::sys;
 use crate::time::Timestamp;
 use crate::types::{CauseOfTransmission, PeerConnectionEvent, Quality, ServerMode};
@@ -23,22 +23,37 @@ pub type ConnectionEventHandler = Box<dyn Fn(PeerConnectionEvent) + Send + Sync>
 
 /// Callback for interrogation commands.
 ///
+/// The ASDU is cloned before being passed to the callback.
 /// Return `true` if handled, `false` otherwise.
-pub type InterrogationHandler = Box<dyn Fn(&MasterConnection, &AsduRef, u8) -> bool + Send + Sync>;
+pub type InterrogationHandler = Box<dyn Fn(&MasterConnection, Asdu, u8) -> bool + Send + Sync>;
 
 /// Callback for clock synchronization commands.
 ///
+/// The ASDU is cloned before being passed to the callback.
 /// Return `true` if handled, `false` otherwise.
-pub type ClockSyncHandler = Box<dyn Fn(&MasterConnection, &AsduRef, &Timestamp) -> bool + Send + Sync>;
+pub type ClockSyncHandler = Box<dyn Fn(&MasterConnection, Asdu, &Timestamp) -> bool + Send + Sync>;
 
 /// Callback for received ASDUs (commands).
 ///
+/// The ASDU is cloned before being passed to the callback.
 /// Return `true` if handled, `false` otherwise.
-pub type AsduHandler = Box<dyn Fn(&MasterConnection, &AsduRef) -> bool + Send + Sync>;
+pub type AsduHandler = Box<dyn Fn(&MasterConnection, Asdu) -> bool + Send + Sync>;
 
 /// A connection from a master (client) to this server.
 ///
-/// This is passed to server callbacks and can be used to send responses.
+/// This type represents a borrowed reference to an active client connection.
+/// It is passed to server callbacks and can be used to send responses.
+///
+/// # Lifetime
+///
+/// **Important:** This type is only valid within the callback scope. The underlying
+/// connection is owned by the C library and may be closed at any time after the
+/// callback returns.
+///
+/// - ✅ Safe: Use within callbacks to send responses
+/// - ❌ Unsafe: Store and use after callback returns
+///
+/// The type intentionally has no `Clone` implementation to prevent accidental storage.
 #[repr(transparent)]
 pub struct MasterConnection(sys::IMasterConnection);
 
@@ -48,13 +63,19 @@ impl MasterConnection {
         Self(ptr)
     }
 
-    /// Get the raw pointer.
+    /// Get the raw pointer for FFI interop.
+    ///
+    /// # Safety
+    ///
+    /// The returned pointer is only valid within the current callback scope.
+    /// Do not store or use after the callback returns, as the connection
+    /// may be closed by the C library at any time.
     pub fn as_ptr(&self) -> sys::IMasterConnection {
         self.0
     }
 
     /// Send an ASDU to this connection.
-    pub fn send_asdu(&self, asdu: &AsduRef) {
+    pub fn send_asdu(&self, asdu: &Asdu) {
         unsafe {
             sys::IMasterConnection_sendASDU(self.0, asdu.as_ptr());
         }
@@ -63,14 +84,14 @@ impl MasterConnection {
     /// Send an activation confirmation (ACT_CON).
     ///
     /// `negative` should be `true` for negative confirmation.
-    pub fn send_act_con(&self, asdu: &AsduRef, negative: bool) {
+    pub fn send_act_con(&self, asdu: &Asdu, negative: bool) {
         unsafe {
             sys::IMasterConnection_sendACT_CON(self.0, asdu.as_ptr(), negative);
         }
     }
 
     /// Send an activation termination (ACT_TERM).
-    pub fn send_act_term(&self, asdu: &AsduRef) {
+    pub fn send_act_term(&self, asdu: &Asdu) {
         unsafe {
             sys::IMasterConnection_sendACT_TERM(self.0, asdu.as_ptr());
         }
@@ -263,7 +284,7 @@ impl Server {
     /// Set the interrogation handler.
     pub fn set_interrogation_handler<F>(&mut self, handler: F)
     where
-        F: Fn(&MasterConnection, &AsduRef, u8) -> bool + Send + Sync + 'static,
+        F: Fn(&MasterConnection, Asdu, u8) -> bool + Send + Sync + 'static,
     {
         self.update_callback_state(|state| {
             state.interrogation_handler = Some(Box::new(handler));
@@ -273,7 +294,7 @@ impl Server {
     /// Set the clock synchronization handler.
     pub fn set_clock_sync_handler<F>(&mut self, handler: F)
     where
-        F: Fn(&MasterConnection, &AsduRef, &Timestamp) -> bool + Send + Sync + 'static,
+        F: Fn(&MasterConnection, Asdu, &Timestamp) -> bool + Send + Sync + 'static,
     {
         self.update_callback_state(|state| {
             state.clock_sync_handler = Some(Box::new(handler));
@@ -283,7 +304,7 @@ impl Server {
     /// Set the ASDU handler for commands.
     pub fn set_asdu_handler<F>(&mut self, handler: F)
     where
-        F: Fn(&MasterConnection, &AsduRef) -> bool + Send + Sync + 'static,
+        F: Fn(&MasterConnection, Asdu) -> bool + Send + Sync + 'static,
     {
         self.update_callback_state(|state| {
             state.asdu_handler = Some(Box::new(handler));
@@ -359,7 +380,7 @@ impl Server {
     /// Enqueue an ASDU to be sent to all connected clients.
     ///
     /// This is used to send spontaneous data updates.
-    pub fn enqueue_asdu(&self, asdu: &AsduRef) {
+    pub fn enqueue_asdu(&self, asdu: &Asdu) {
         unsafe {
             sys::CS104_Slave_enqueueASDU(self.ptr.as_ptr(), asdu.as_ptr());
         }
@@ -538,8 +559,11 @@ unsafe extern "C" fn interrogation_trampoline(
     let state = &*(parameter as *const CallbackState);
     if let Some(ref handler) = state.interrogation_handler {
         let conn = MasterConnection::from_ptr(connection);
-        let asdu_ref = AsduRef::from_ptr(asdu);
-        handler(&conn, asdu_ref, qoi as u8)
+        if let Some(owned_asdu) = Asdu::clone_from_ptr(asdu) {
+            handler(&conn, owned_asdu, qoi as u8)
+        } else {
+            false
+        }
     } else {
         false
     }
@@ -557,9 +581,12 @@ unsafe extern "C" fn clock_sync_trampoline(
     let state = &*(parameter as *const CallbackState);
     if let Some(ref handler) = state.clock_sync_handler {
         let conn = MasterConnection::from_ptr(connection);
-        let asdu_ref = AsduRef::from_ptr(asdu);
-        let time = Timestamp(*new_time);
-        handler(&conn, asdu_ref, &time)
+        if let Some(owned_asdu) = Asdu::clone_from_ptr(asdu) {
+            let time = Timestamp(*new_time);
+            handler(&conn, owned_asdu, &time)
+        } else {
+            false
+        }
     } else {
         false
     }
@@ -576,8 +603,11 @@ unsafe extern "C" fn asdu_handler_trampoline(
     let state = &*(parameter as *const CallbackState);
     if let Some(ref handler) = state.asdu_handler {
         let conn = MasterConnection::from_ptr(connection);
-        let asdu_ref = AsduRef::from_ptr(asdu);
-        handler(&conn, asdu_ref)
+        if let Some(owned_asdu) = Asdu::clone_from_ptr(asdu) {
+            handler(&conn, owned_asdu)
+        } else {
+            false
+        }
     } else {
         false
     }

@@ -56,9 +56,9 @@
 //!
 //! server.set_interrogation_handler(|conn, asdu, qoi| {
 //!     println!("Interrogation for group {}", qoi);
-//!     conn.send_act_con(asdu, false);
+//!     conn.send_act_con(&asdu, false);
 //!     // Send data...
-//!     conn.send_act_term(asdu);
+//!     conn.send_act_term(&asdu);
 //!     true
 //! });
 //!
@@ -101,7 +101,7 @@ pub mod types;
 pub mod sys;
 
 // Convenience re-exports
-pub use asdu::AsduRef;
+pub use asdu::Asdu;
 pub use client::{Connection, ConnectionBuilder};
 pub use info::{
     DoublePoint, DoublePointValue, InfoObject, Ioa, MeasuredFloat, MeasuredNormalized,

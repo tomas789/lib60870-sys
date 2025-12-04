@@ -8,7 +8,7 @@ use std::os::raw::c_void;
 use std::ptr::NonNull;
 use std::sync::Arc;
 
-use crate::asdu::AsduRef;
+use crate::asdu::Asdu;
 use crate::sys;
 use crate::time::Timestamp;
 use crate::types::{CauseOfTransmission, ConnectionEvent};
@@ -18,8 +18,11 @@ pub type ConnectionHandler = Box<dyn Fn(ConnectionEvent) + Send + Sync>;
 
 /// Callback for received ASDUs.
 ///
+/// The ASDU is cloned before being passed to the callback, so it's safe
+/// to store or send to another thread.
+///
 /// Return `true` to indicate the ASDU was handled, `false` otherwise.
-pub type AsduHandler = Box<dyn Fn(&AsduRef) -> bool + Send + Sync>;
+pub type AsduHandler = Box<dyn Fn(Asdu) -> bool + Send + Sync>;
 
 /// Builder for configuring a connection.
 pub struct ConnectionBuilder {
@@ -94,7 +97,7 @@ struct CallbackState {
 ///     for obj in asdu.parse_objects() {
 ///         println!("  {:?}", obj);
 ///     }
-///     true
+///     true // asdu is owned, can be stored if needed
 /// });
 ///
 /// if conn.connect() {
@@ -175,9 +178,11 @@ impl Connection {
     }
 
     /// Set the ASDU received handler.
+    ///
+    /// The ASDU passed to the callback is an owned clone, safe to store.
     pub fn set_asdu_handler<F>(&mut self, handler: F)
     where
-        F: Fn(&AsduRef) -> bool + Send + Sync + 'static,
+        F: Fn(Asdu) -> bool + Send + Sync + 'static,
     {
         let state = Arc::new(CallbackState {
             connection_handler: None,
@@ -203,7 +208,7 @@ impl Connection {
     pub fn set_handlers<C, A>(&mut self, connection_handler: C, asdu_handler: A)
     where
         C: Fn(ConnectionEvent) + Send + Sync + 'static,
-        A: Fn(&AsduRef) -> bool + Send + Sync + 'static,
+        A: Fn(Asdu) -> bool + Send + Sync + 'static,
     {
         let state = Arc::new(CallbackState {
             connection_handler: Some(Box::new(connection_handler)),
@@ -390,8 +395,12 @@ unsafe extern "C" fn asdu_handler_trampoline(
     }
     let state = &*(parameter as *const CallbackState);
     if let Some(ref handler) = state.asdu_handler {
-        let asdu_ref = AsduRef::from_ptr(asdu);
-        handler(asdu_ref)
+        // Clone the ASDU so the callback gets an owned copy
+        if let Some(owned_asdu) = Asdu::clone_from_ptr(asdu) {
+            handler(owned_asdu)
+        } else {
+            false
+        }
     } else {
         false
     }
