@@ -22,3 +22,6 @@ target
 
 # Cargo lock file
 Cargo.lock
+
+# The library code
+lib60870

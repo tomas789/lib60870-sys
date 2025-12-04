@@ -19,6 +19,7 @@ tcp-keepalive = []
 tls = []
 
 [dependencies]
+bitflags = "2"
 foreign-types = "0.5"
 
 [build-dependencies]
