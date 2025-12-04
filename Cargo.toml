@@ -1,8 +1,8 @@
 [package]
-name = "lib60870-sys"
+name = "lib60870"
 version = "0.1.0"
 edition = "2021"
-description = "FFI bindings to lib60870-C, an IEC 60870-5-101/104 protocol implementation"
+description = "Safe Rust bindings to lib60870-C, an IEC 60870-5-101/104 protocol implementation"
 license = "GPL-3.0"
 repository = "https://github.com/mz-automation/lib60870"
 links = "lib60870"
@@ -17,6 +17,9 @@ no-threads = []
 tcp-keepalive = []
 # TLS support (downloads and links mbedtls 2.28)
 tls = []
+
+[dependencies]
+foreign-types = "0.5"
 
 [build-dependencies]
 bindgen = "0.72"
