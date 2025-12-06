@@ -7,6 +7,8 @@
 
 Safe Rust bindings to [lib60870-C](https://github.com/mz-automation/lib60870), an IEC 60870-5-101/104 protocol implementation.
 
+**📚 Documentation:** [https://tomas789.github.io/lib60870-sys/lib60870/](https://tomas789.github.io/lib60870-sys/lib60870/)
+
 ## Features
 
 - **Safe API** - Automatic memory management with owned types
