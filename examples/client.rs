@@ -29,4 +29,3 @@ fn main() {
     }
     // Connection automatically closed on drop
 }
-

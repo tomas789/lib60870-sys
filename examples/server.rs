@@ -26,12 +26,11 @@ fn main() {
     loop {
         server.send_measured_scaled(
             CauseOfTransmission::Periodic,
-            1,    // Common address
-            100,  // IOA
-            42,   // Value
+            1,   // Common address
+            100, // IOA
+            42,  // Value
             Quality::GOOD,
         );
         std::thread::sleep(std::time::Duration::from_secs(1));
     }
 }
-
