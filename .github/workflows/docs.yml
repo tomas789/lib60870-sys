@@ -41,13 +41,28 @@ jobs:
         env:
           RUSTDOCFLAGS: -D warnings
 
+      - name: Create root index.html
+        run: |
+          cat > target/doc/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta http-equiv="refresh" content="0; url=lib60870/index.html">
+              <link rel="canonical" href="lib60870/index.html">
+          </head>
+          <body>
+              <p>Redirecting to <a href="lib60870/index.html">documentation</a>...</p>
+          </body>
+          </html>
+          EOF
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: target/doc/lib60870
+          path: target/doc
 
   deploy:
     name: Deploy to GitHub Pages
