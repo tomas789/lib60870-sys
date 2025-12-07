@@ -1,16 +1,16 @@
 [package]
-name = "lib60870"
+name = "lib60870-sys"
 version = "0.4.0"
 edition = "2021"
 rust-version = "1.70"
 description = "Safe Rust bindings to lib60870-C, an IEC 60870-5-101/104 protocol implementation"
 license = "GPL-3.0"
 repository = "https://github.com/tomas789/lib60870-sys"
-documentation = "https://docs.rs/lib60870"
+documentation = "https://docs.rs/lib60870-sys"
 readme = "README.md"
 keywords = ["iec60870", "iec104", "scada", "power-systems", "ffi"]
 categories = ["external-ffi-bindings", "network-programming"]
-links = "lib60870"
+links = "lib60870-sys"
 exclude = [
     ".github/",
     "lib60870/",
