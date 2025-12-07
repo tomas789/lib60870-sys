@@ -39,6 +39,7 @@ lib60870-sys = { version = "0.4", features = ["tls"] }
 
 ```rust
 use lib60870_sys::*;
+use std::ffi::CString;
 
 fn main() {
     // Get library version
@@ -49,9 +50,9 @@ fn main() {
     );
 
     // Create a connection
-    let ip = "127.0.0.1";
+    let ip = CString::new("127.0.0.1").unwrap();
     let port = 2404;
-    let conn = unsafe { CS104_Connection_create(ip.as_ptr() as *const std::os::raw::c_char, port) };
+    let conn = unsafe { CS104_Connection_create(ip.as_ptr(), port) };
 
     if !conn.is_null() {
         println!("Connection created successfully");
