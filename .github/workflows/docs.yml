@@ -47,11 +47,11 @@ jobs:
           <!DOCTYPE html>
           <html>
           <head>
-              <meta http-equiv="refresh" content="0; url=lib60870/index.html">
-              <link rel="canonical" href="lib60870/index.html">
+              <meta http-equiv="refresh" content="0; url=lib60870_sys/index.html">
+              <link rel="canonical" href="lib60870_sys/index.html">
           </head>
           <body>
-              <p>Redirecting to <a href="lib60870/index.html">documentation</a>...</p>
+              <p>Redirecting to <a href="lib60870_sys/index.html">documentation</a>...</p>
           </body>
           </html>
           EOF

@@ -80,6 +80,22 @@ fn main() {
     // Rerun if build.rs or wrapper.h changes
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=wrapper.h");
+
+    println!("cargo:rerun-if-env-changed=LIB60870_SYS_UPDATE_PREGENERATED_BINDINGS");
+    println!("cargo:rerun-if-env-changed=DOCS_RS");
+    println!("cargo:rerun-if-env-changed=CARGO_FEATURE_TLS");
+
+    let should_update_pregenerated_bindings =
+        env::var("LIB60870_SYS_UPDATE_PREGENERATED_BINDINGS") == Ok("1".to_string());
+    if should_update_pregenerated_bindings {
+        println!("cargo:warning=Updating pre-generated bindings");
+        // Copy bindings.rs to src/bindings_pregenerated.rs
+        let source_path = out_dir.join("bindings.rs");
+        let target_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
+            .join("src/bindings_pregenerated.rs");
+        std::fs::copy(source_path, target_path)
+            .expect("Failed to copy bindings.rs to src/bindings_pregenerated.rs");
+    }
 }
 
 fn download_and_extract_tarball(url: &str, out_dir: &Path) {

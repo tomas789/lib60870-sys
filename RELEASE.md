@@ -1,6 +1,6 @@
 # Release Process
 
-This document describes how to release a new version of the `lib60870` crate.
+This document describes how to release a new version of the `lib60870-sys` crate.
 
 ## Release Steps
 
@@ -19,8 +19,7 @@ If you've updated the lib60870 C library version, regenerate the bindings:
 
 ```bash
 rm -rf target
-cargo build
-cp target/debug/build/lib60870-*/out/bindings.rs src/bindings_pregenerated.rs
+LIB60870_SYS_UPDATE_PREGENERATED_BINDINGS=1 cargo build
 ```
 
 This is required for docs.rs to build documentation (it has no network access).
@@ -48,5 +47,5 @@ When you publish a GitHub release:
 1. The `release.yml` workflow triggers
 2. It verifies the tag version matches `Cargo.toml`
 3. Builds and tests the crate
-4. Publishes to [crates.io](https://crates.io/crates/lib60870)
+4. Publishes to [crates.io](https://crates.io/crates/lib60870-sys)
 5. docs.rs automatically builds documentation using the pre-generated bindings
