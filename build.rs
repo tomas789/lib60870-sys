@@ -26,6 +26,8 @@ fn main() {
     // docs.rs sets DOCS_RS=1 and has no network access
     if env::var("DOCS_RS").is_ok() {
         println!("cargo:warning=Skipping native build on docs.rs (using pre-generated bindings)");
+        // Emit the docsrs cfg flag so rustc knows to use pregenerated bindings
+        println!("cargo:rustc-cfg=docsrs");
         return;
     }
 
@@ -86,7 +88,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=CARGO_FEATURE_TLS");
 
     let should_update_pregenerated_bindings =
-        env::var("LIB60870_SYS_UPDATE_PREGENERATED_BINDINGS") == Ok("1".to_string());
+        env::var("LIB60870_SYS_UPDATE_PREGENERATED_BINDINGS").is_ok();
     if should_update_pregenerated_bindings {
         println!("cargo:warning=Updating pre-generated bindings");
         // Copy bindings.rs to src/bindings_pregenerated.rs
